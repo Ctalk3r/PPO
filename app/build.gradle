@@ -1,3 +1,8 @@
+import org.ajoberstar.grgit.Grgit
+
+plugins {
+    id "org.ajoberstar.grgit" version "3.1.1"
+}
 apply plugin: 'com.android.application'
 
 android {
@@ -5,10 +10,20 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.ppoproject"
+
+
+        int tagSize = "${grgit.tag.list().size}".toInteger()
+        def lastTagName = "${grgit.tag.list()[tagSize - 1].getName()}"
+        def minor = "${lastTagName.substring(lastTagName.indexOf('.') + 1)}"
+        def major = "${lastTagName.substring(0, lastTagName.length() - lastTagName.indexOf('.') - 1)}"
+        def patch = """${grgit.describe(commit: grgit.head(), tags : true) == lastTagName ?
+                         0 : grgit.describe(commit: grgit.head(), tags : true).split('-')[1]}"""
+
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode tagSize
+        versionName "${major}.${minor}.${patch}"
+        new File(projectDir, "version.txt").text = """versionName $versionName\nversionCode $versionCode"""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
