@@ -23,7 +23,7 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode tagSize
+        versionCode tagSize*100 + patch.toInteger()
         versionName "${major}.${minor}.${patch}"
         new File(projectDir, "version.txt").text = """versionName $versionName\nversionCode $versionCode"""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
